@@ -1,0 +1,25 @@
+const weightMap = {
+  "45": {
+    "1": 42,
+    "2": 55,
+    "3": 36,
+    "4": 200,
+  },
+  "46": {
+    "1": 50,
+    "2": 60,
+  },
+  "120": {
+    "1": 26,
+    "2": 1120,
+  },
+};
+
+function getUniqueWeight(job_id, process_id) {
+  if (weightMap[job_id] && weightMap[job_id][process_id]) {
+    return weightMap[job_id][process_id];
+  }
+  return null;
+}
+
+module.exports = { getUniqueWeight };

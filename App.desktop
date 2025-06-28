@@ -1,0 +1,5 @@
+[Desktop Entry]
+Type=Application
+Terminal=true
+Name=App
+Exec=/home/piyush/Desktop/EMP_506/start_all.sh
