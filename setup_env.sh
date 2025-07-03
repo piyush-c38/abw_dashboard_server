@@ -10,7 +10,7 @@ sudo apt upgrade -y
 sudo apt install -y mosquitto sqlite3
 
 # Configure Mosquitto to allow anonymous access
-MOSQ_CONF="/etc/mosquitto/conf.d/emp506.conf"
+MOSQ_CONF="/etc/mosquitto/conf.d/abw_dashboard.conf"
 echo "listener 1883
 allow_anonymous true" | sudo tee "$MOSQ_CONF" > /dev/null
 
