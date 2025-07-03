@@ -48,6 +48,7 @@ if [ -d "server" ]; then
 fi
 
 # Install project dependencies for dashboard (frontend)
+echo "Installing dashboard dependencies..."
 if [ -d "dashboard" ]; then
   cd dashboard
   if [ -f package.json ]; then

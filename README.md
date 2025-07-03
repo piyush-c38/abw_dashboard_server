@@ -1,7 +1,8 @@
 # Instructions to setup the project
 * Place the Project folder in the Desktop.
 * Next, Move the ```App.desktop``` file  to the Desktop.
-* Run the ```setup_env.sh``` file to setup the complete eviornment, running below command in the terminal inside the Project folder.
+* Run the ```chmod +x setup_env.sh``` command in the terminal inside the Project folder.
+* Then Run the below command to setup the complete eviornment.
 ```
 ./setup_env.sh
 ```
