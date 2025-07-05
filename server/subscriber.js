@@ -1,6 +1,6 @@
 const mqtt = require("mqtt");
 const { insert } = require("./db");
-const { getUniqueWeight } = require("./weightMapping");
+const { getUniqueWeight } = require("./variable");
 
 const brokerUrl = "mqtt://localhost:1883";
 const client = mqtt.connect(brokerUrl);

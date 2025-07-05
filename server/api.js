@@ -2,11 +2,14 @@ const express = require('express');
 const cors = require('cors');
 const { db, insert } = require('./db'); 
 const { getConnectedTables } = require('./subscriber');
+const fs = require('fs');
+const path = require('path');
 
 const app = express();
 const PORT = 5000;
 
 app.use(cors());
+app.use(express.json()); // Add JSON parsing middleware
 
 // GET latest entry per table for the current date only
 app.get('/api/latest-per-table', (req, res) => {
@@ -81,6 +84,105 @@ app.get('/api/machine-status', (req, res) => {
         res.json(status);
     } catch (err) {
         res.status(500).send('Error fetching machine status');
+    }
+});
+
+// Weight management endpoints
+app.get('/api/weights', (req, res) => {
+    try {
+        const { getWeightMap } = require('./variable');
+        const weights = getWeightMap();
+        res.json(weights);
+        console.log(weights);
+    } catch (err) {
+        console.error('Failed to fetch weights:', err);
+        res.status(500).send('Error fetching weights');
+    }
+});
+
+app.post('/api/weights', (req, res) => {
+    try {
+        const { jobId, processId, weight } = req.body;
+        
+        if (!jobId || !processId || weight === undefined) {
+            return res.status(400).json({ error: "Missing required fields: jobId, processId, weight" });
+        }
+
+        // Read current variable.js file
+        const variablePath = path.join(__dirname, 'variable.js');
+        let fileContent = fs.readFileSync(variablePath, 'utf8');
+        
+        // Parse the weightMap from the file
+        const weightMapMatch = fileContent.match(/const weightMap = ({[\s\S]*?});/);
+        if (!weightMapMatch) {
+            return res.status(500).json({ error: "Unable to parse weightMap" });
+        }
+        
+        let weightMap = eval('(' + weightMapMatch[1] + ')');
+        
+        // Add or update the weight
+        if (!weightMap[jobId]) {
+            weightMap[jobId] = {};
+        }
+        weightMap[jobId][processId] = parseInt(weight);
+        
+        // Generate new file content
+        const newWeightMapStr = JSON.stringify(weightMap, null, 2);
+        const newFileContent = fileContent.replace(
+            /const weightMap = {[\s\S]*?};/,
+            `const weightMap = ${newWeightMapStr};`
+        );
+        
+        // Write back to file
+        fs.writeFileSync(variablePath, newFileContent);
+        
+        res.json({ success: true, message: "Weight updated successfully" });
+    } catch (err) {
+        console.error('Failed to update weight:', err);
+        res.status(500).send('Error updating weight');
+    }
+});
+
+app.delete('/api/weights/:jobId/:processId', (req, res) => {
+    try {
+        const { jobId, processId } = req.params;
+        
+        // Read current variable.js file
+        const variablePath = path.join(__dirname, 'variable.js');
+        let fileContent = fs.readFileSync(variablePath, 'utf8');
+        
+        // Parse the weightMap from the file
+        const weightMapMatch = fileContent.match(/const weightMap = ({[\s\S]*?});/);
+        if (!weightMapMatch) {
+            return res.status(500).json({ error: "Unable to parse weightMap" });
+        }
+        
+        let weightMap = eval('(' + weightMapMatch[1] + ')');
+        
+        // Remove the weight
+        if (weightMap[jobId] && weightMap[jobId][processId]) {
+            delete weightMap[jobId][processId];
+            
+            // If job has no more processes, remove the job entirely
+            if (Object.keys(weightMap[jobId]).length === 0) {
+                delete weightMap[jobId];
+            }
+        }
+        
+        // Generate new file content
+        const newWeightMapStr = JSON.stringify(weightMap, null, 2);
+        const newFileContent = fileContent.replace(
+            /const weightMap = {[\s\S]*?};/,
+            `const weightMap = ${newWeightMapStr};`
+        );
+        
+        // Write back to file
+        fs.writeFileSync(variablePath, newFileContent);
+        
+        res.json({ success: true, message: "Weight deleted successfully" });
+    } catch (err) {
+        console.error('Failed to delete weight:', err);
+        res.status(500).send('Error deleting weight');
     }
 });
 
