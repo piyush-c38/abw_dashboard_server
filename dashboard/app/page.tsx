@@ -39,9 +39,6 @@ export default function Home() {
                 <DropdownMenuLabel>Settings</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                  <DropdownMenuItem onClick={() => router.push("/wificredential")}>
-                    Wifi Credentials
-                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => router.push("/jobdetail")}>
                     Job Details
                   </DropdownMenuItem>
