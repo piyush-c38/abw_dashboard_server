@@ -90,6 +90,9 @@ app.get('/api/machine-status', (req, res) => {
 // Weight management endpoints
 app.get('/api/weights', (req, res) => {
     try {
+        // Clear the module cache so next require gets fresh data
+        delete require.cache[require.resolve('./variable')];
+        
         const { getWeightMap } = require('./variable');
         const weights = getWeightMap();
         res.json(weights);
@@ -136,6 +139,9 @@ app.post('/api/weights', (req, res) => {
         // Write back to file
         fs.writeFileSync(variablePath, newFileContent);
         
+        // Clear the module cache so next require gets fresh data
+        delete require.cache[require.resolve('./variable')];
+        
         res.json({ success: true, message: "Weight updated successfully" });
     } catch (err) {
         console.error('Failed to update weight:', err);
@@ -178,6 +184,9 @@ app.delete('/api/weights/:jobId/:processId', (req, res) => {
         
         // Write back to file
         fs.writeFileSync(variablePath, newFileContent);
+        
+        // Clear the module cache so next require gets fresh data
+        delete require.cache[require.resolve('./variable')];
         
         res.json({ success: true, message: "Weight deleted successfully" });
     } catch (err) {
