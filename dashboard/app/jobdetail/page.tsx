@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Settings, Plus, Trash2, Edit, Save, X } from 'lucide-react';
+import { useIsClient } from "@/lib/useIsClient";
 
 interface WeightData {
     [jobId: string]: {
@@ -32,6 +33,7 @@ export default function JobDetail() {
     const [editValues, setEditValues] = useState<{[key: string]: number}>({});
     const [newEntry, setNewEntry] = useState({ jobId: '', processId: '', weight: '' });
     const [isAddingNew, setIsAddingNew] = useState(false);
+    const isClient = useIsClient();
 
     const fetchWeights = async () => {
         try {
@@ -128,8 +130,21 @@ export default function JobDetail() {
     });
 
     useEffect(() => {
-        fetchWeights();
-    }, []);
+        if (isClient) {
+            fetchWeights();
+            const interval = setInterval(fetchWeights, 5000); // refresh every 5 seconds
+            return () => clearInterval(interval);
+        }
+    }, [isClient]);
+
+    // Show loading state during hydration
+    if (!isClient) {
+        return (
+            <div className="flex flex-col w-screen h-screen justify-center items-center bg-[#effbfc] border-8 border-[#153c49]">
+                <div className="text-2xl text-[#153c49]">Loading...</div>
+            </div>
+        );
+    }
 
     return (
         <div className="flex flex-col w-screen h-screen justify-start items-center pt-20 gap-10 bg-[#effbfc] border-8 border-[#153c49]">

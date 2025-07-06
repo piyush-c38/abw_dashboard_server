@@ -13,7 +13,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased" style={{ fontFamily: "system-ui, sans-serif" }}>
+      <body 
+        className="antialiased" 
+        style={{ fontFamily: "system-ui, sans-serif" }}
+        suppressHydrationWarning={true}
+      >
         {children}
       </body>
     </html>
