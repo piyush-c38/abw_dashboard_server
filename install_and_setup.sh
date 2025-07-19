@@ -4,12 +4,12 @@ echo "Installing complete offline package..."
 
 # Install Node.js
 echo "Installing Node.js..."
-sudo tar -xJf "offline_env setup/node-v20.18.0-linux-x64.tar.xz" -C /opt/
+sudo tar -xJf "dependency_zips/node-v20.18.0-linux-x64.tar.xz" -C /opt/
 sudo ln -sf /opt/node-v20.18.0-linux-x64/bin/* /usr/local/bin/
 
 # Install SQLite3
 echo "Installing SQLite3..."
-cd "offline_env setup"
+cd "dependency_zips"
 unzip sqlite-tools-linux-x64-3460000.zip
 sudo cp sqlite3 /usr/local/bin/
 sudo chmod +x /usr/local/bin/sqlite3
@@ -17,7 +17,7 @@ cd ..
 
 # Install Mosquitto from offline tar.gz package
 echo "Installing Mosquitto..."
-cd "offline_env setup"
+cd "dependency_zips"
 if [ -f mosquitto-offline.tar.gz ]; then
     echo "Extracting Mosquitto offline package..."
     tar -xzvf mosquitto-offline.tar.gz
