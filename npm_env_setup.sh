@@ -29,3 +29,9 @@ if [ -d "dashboard" ]; then
 fi
 
 echo "Npm environment is Setup Now."
+
+# Compress the entire ABW_DASHBOARD_SERVER directory
+echo "Compressing the project directory..."
+cd ..
+tar -czf EMP_506_setup.tar.gz abw_dashboard_server/
+echo "Project compressed as EMP_506_setup.tar.gz"
