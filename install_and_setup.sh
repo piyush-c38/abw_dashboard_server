@@ -1,20 +1,23 @@
-#Note: The sources are binary files of sqlite and node. For mosquitto package formatino steps have been followed for ubuntu 22.
 #!/bin/bash
+#Note: The sources are binary files of sqlite and node. For mosquitto package formatino steps have been followed for ubuntu 22.
 echo "Installing complete offline package..."
 
 # Install Node.js
 echo "Installing Node.js..."
-sudo tar -xJf node-v20.18.0-linux-x64.tar.xz -C /opt/
+sudo tar -xJf "offline_env setup/node-v20.18.0-linux-x64.tar.xz" -C /opt/
 sudo ln -sf /opt/node-v20.18.0-linux-x64/bin/* /usr/local/bin/
 
 # Install SQLite3
 echo "Installing SQLite3..."
+cd "offline_env setup"
 unzip sqlite-tools-linux-x64-3460000.zip
 sudo cp sqlite3 /usr/local/bin/
 sudo chmod +x /usr/local/bin/sqlite3
+cd ..
 
 # Install Mosquitto from offline tar.gz package
 echo "Installing Mosquitto..."
+cd "offline_env setup"
 if [ -f mosquitto-offline.tar.gz ]; then
     echo "Extracting Mosquitto offline package..."
     tar -xzvf mosquitto-offline.tar.gz
@@ -26,9 +29,10 @@ if [ -f mosquitto-offline.tar.gz ]; then
     echo "Fixing any dependency issues..."
     sudo apt install -f -y 2>/dev/null || echo "Dependencies resolved or not critical"
     
-    cd ..
+    cd ../..
 else
     echo "mosquitto-offline.tar.gz file not found!"
+    cd ..
 fi
 
 echo "Creating Mosquitto config..."
@@ -53,3 +57,25 @@ else
 fi
 
 echo "✅ All installations completed!"
+
+echo ""
+echo "========================================="
+echo "Setting up ABW Dashboard project..."
+echo "========================================="
+
+# Copy the desktop file to the user's desktop
+echo "Copying App.desktop to Desktop..."
+if [ -f "App.desktop" ]; then
+  cp "App.desktop" ~/Desktop/
+  echo "App.desktop copied to Desktop"
+else
+  echo "Warning: App.desktop not found in project directory"
+fi
+
+# Make the desktop file executable
+chmod +x ~/Desktop/App.desktop
+
+# Make the start_all.sh script executable
+chmod +x start_all.sh
+
+echo "Setup complete. You can now run ./start_all.sh"
